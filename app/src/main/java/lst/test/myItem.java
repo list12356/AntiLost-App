@@ -15,13 +15,13 @@ public class myItem {
     myItem()
     {
         rssi=0;
-        longitude=0;
-        latitude=0;
+        last_location=null;
     }
     String Address;
     String Name;
     int rssi;
-    double longitude;
     double latitude;
+    double longitude;
+    String last_location;
     String last_time;
 }

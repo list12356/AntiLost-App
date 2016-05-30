@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     public static ItemList myItemList;
     private boolean hasregister = false;
     private final BroadcastReceiver myReceiver = new myBroadcastReceiver();
+    public final static String EXTRA_MESSAGE = "com.example.myapp.MESSAGE";
 
     public LocationClient mLocationClient = null;
     public BDLocationListener myListener = new MyLocationListener();
@@ -69,7 +70,9 @@ public class MainActivity extends AppCompatActivity
     Calendar calendar=Calendar.getInstance();
     BluetoothDevice device=null;
     BluetoothSocket socket=null;
-    //BDLocation mylocation=null;
+    String mylocation=null;
+    double longitude=0;
+    double latitude=0;
 
     private static final int min_rssi=70;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -85,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         init_connection();
         init_discovery();
 
-        //mLocationClient.start();
+        mLocationClient.start();
         myBluetoothAdapter.startDiscovery();
     }
     protected void onDestroy() {
@@ -96,10 +99,18 @@ public class MainActivity extends AppCompatActivity
             hasregister=false;
             unregisterReceiver(myReceiver);
         }
+        timer.cancel();
         super.onDestroy();
     }
 
     void init_discovery() {
+
+    }
+    void init_connection()
+    {
+        myItemList=new ItemList();
+        myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         //注册蓝牙接收广播
         if(!hasregister)
         {
@@ -111,12 +122,8 @@ public class MainActivity extends AppCompatActivity
         }
         locked=0;
         timer=new Timer();
-        timer.schedule(new myTimer(),1000,2000);
-    }
-    void init_connection()
-    {
-        myItemList=new ItemList();
-        myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        timer.schedule(new myTimer(),1000,3000);
+        myBluetoothAdapter.startDiscovery();
     }
     private void initLocation() {
         LocationClientOption option = new LocationClientOption();
@@ -263,7 +270,7 @@ public class MainActivity extends AppCompatActivity
             //若不在线
             {
                 dialog.setTitle("Device:" + myItemList.Data.get(pos).Name+"Address:"+myItemList.Data.get(pos).Address);
-                dialog.setMessage("Last Scan:"+myItemList.Data.get(pos).last_time);
+                dialog.setMessage("Last Scan time:"+myItemList.Data.get(pos).last_time+"\nLast Location:"+myItemList.Data.get(pos).last_location);
                 dialog.setPositiveButton("Retry Connection",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -283,9 +290,10 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }
                         });
-                dialog.setNeutralButton("Last position", new DialogInterface.OnClickListener() {
+                dialog.setNeutralButton("View Map", new DialogInterface.OnClickListener() {
                      public void onClick(DialogInterface arg0, int arg1) {
-                         Intent jump=new Intent(MainActivity.this, MainActivity.class);
+                         Intent jump=new Intent(MainActivity.this, MapActivity.class);
+                         jump.putExtra(EXTRA_MESSAGE, String.valueOf(pos));
                          startActivity(jump);
                          finish();
                         }
@@ -403,10 +411,11 @@ public class MainActivity extends AppCompatActivity
                                 +calendar.get(Calendar.DATE)+" "+calendar.get(Calendar.HOUR)+":"+calendar.get(Calendar.MINUTE)
                                 +":"+calendar.get(Calendar.SECOND);
                         status_text.setText("Device:"+ myItemList.Data.get(i).Name+"RSSI:"+myItemList.Data.get(i).rssi);
-/*                        if(mylocation!=null) {
-                            myItemList.Data.get(i).longitude = mylocation.getLongitude();
-                            myItemList.Data.get(i).latitude = mylocation.getLongitude();
-                        }*/
+                        if(mylocation!=null) {
+                            myItemList.Data.get(i).last_location=mylocation;
+                            myItemList.Data.get(i).latitude=latitude;
+                            myItemList.Data.get(i).longitude=longitude;
+                        }
                         if (Math.abs(myItemList.Data.get(i).rssi) > min_rssi&&locked==0&&distance_alert==true) {
                             locked=1;
                             clientConnectThread = new ClientThread();
@@ -432,40 +441,18 @@ public class MainActivity extends AppCompatActivity
         public void onReceiveLocation(BDLocation location) {
             //Receive Location
             StringBuffer sb = new StringBuffer(256);
-            sb.append("time : ");
-            sb.append(location.getTime());
-            sb.append("\nerror code : ");
-            sb.append(location.getLocType());
             sb.append("\nlatitude : ");
             sb.append(location.getLatitude());
             sb.append("\nlontitude : ");
             sb.append(location.getLongitude());
-            sb.append("\nradius : ");
-            sb.append(location.getRadius());
             if (location.getLocType() == BDLocation.TypeGpsLocation) {// GPS定位结果
-                sb.append("\nspeed : ");
-                sb.append(location.getSpeed());// 单位：公里每小时
-                sb.append("\nsatellite : ");
-                sb.append(location.getSatelliteNumber());
-                sb.append("\nheight : ");
-                sb.append(location.getAltitude());// 单位：米
-                sb.append("\ndirection : ");
-                sb.append(location.getDirection());// 单位度
-                sb.append("\naddr : ");
-                sb.append(location.getAddrStr());
-                sb.append("\ndescribe : ");
-                sb.append("gps定位成功");
-
+                sb.append("\ntype : ");
+                sb.append("GPS");
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
-                sb.append("\naddr : ");
-                sb.append(location.getAddrStr());
-                //运营商信息
-                sb.append("\noperationers : ");
-                sb.append(location.getOperators());
-                sb.append("\ndescribe : ");
+                sb.append("\ntype : ");
                 sb.append("网络定位成功");
             } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {// 离线定位结果
-                sb.append("\ndescribe : ");
+                sb.append("\ntype : ");
                 sb.append("离线定位成功，离线定位结果也是有效的");
             } else if (location.getLocType() == BDLocation.TypeServerError) {
                 sb.append("\ndescribe : ");
@@ -479,16 +466,9 @@ public class MainActivity extends AppCompatActivity
             }
             sb.append("\nlocationdescribe : ");
             sb.append(location.getLocationDescribe());// 位置语义化信息
-            List<Poi> list = location.getPoiList();// POI数据
-            if (list != null) {
-                sb.append("\npoilist size = : ");
-                sb.append(list.size());
-                for (Poi p : list) {
-                    sb.append("\npoi= : ");
-                    sb.append(p.getId() + " " + p.getName() + " " + p.getRank());
-                }
-            }
-            status_text.setText(sb.toString());
+            mylocation=sb.toString();
+            latitude=location.getLatitude();
+            longitude=location.getLongitude();
         }
     }
 }
