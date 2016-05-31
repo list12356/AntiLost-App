@@ -44,7 +44,7 @@ public class MapActivity extends AppCompatActivity {
 //普通地图
         mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         //设定中心点坐标
-        LatLng cenpt = new LatLng(29.806651,121.606983);
+        LatLng cenpt = new LatLng(latitude,longitude);
         //定义地图状态
         MapStatus mMapStatus = new MapStatus.Builder()
                 .target(cenpt)
