@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
     double longitude=0;
     double latitude=0;
 
-    public static int min_rssi=80;
+    public static int min_rssi=90;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     protected void onCreate(Bundle savedInstanceState) {
