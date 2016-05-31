@@ -42,7 +42,7 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
@@ -67,8 +67,12 @@
         <activity
             android:name=".MapActivity"
             android:label="Map" />
-        <activity android:name=".SettingActivity"
-            android:label="Setting" />/>
+        <activity
+            android:name=".SettingActivity"
+            android:label="Setting" />
+        />
+        <activity android:name=".HelpActivity"
+            android:label="Help" />/>
     </application>
 
 </manifest>

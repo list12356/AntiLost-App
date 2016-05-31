@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
     double longitude=0;
     double latitude=0;
 
-    public static int min_rssi=90;
+    public static int min_rssi=70;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,9 +118,9 @@ public class MainActivity extends AppCompatActivity
             registerReceiver(myReceiver, filterEnd);
         }
         locked=0;
-        timer=new Timer();
-        timer.schedule(new myTimer(),1000,3000);
         myBluetoothAdapter.startDiscovery();
+        timer=new Timer();
+        timer.schedule(new myTimer(),0,3000);
     }
     private void initLocation() {
         LocationClientOption option = new LocationClientOption();
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity
         myArrayAdapter.notifyDataSetChanged();
         if(timer==null)
             timer=new Timer();
-        timer.schedule(new myTimer(),1000,3000);
+        timer.schedule(new myTimer(),0,3000);
     }
     @Override
     public void onBackPressed() {
@@ -229,7 +229,9 @@ public class MainActivity extends AppCompatActivity
             finish();
 
         } else if (id == R.id.nav_share) {
-
+            Intent jump=new Intent(MainActivity.this, HelpActivity.class);
+            startActivity(jump);
+            finish();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -273,6 +275,12 @@ public class MainActivity extends AppCompatActivity
             } else
             //若不在线
             {
+                try {
+                    Method m = device.getClass().getMethod("removeBond", (Class[]) null);
+                    m.invoke(device);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 dialog.setTitle("Device:" + myItemList.Data.get(pos).Name+"Address:"+myItemList.Data.get(pos).Address);
                 dialog.setMessage("Last Scan time:"+myItemList.Data.get(pos).last_time+"\nLast Location:"+myItemList.Data.get(pos).last_location);
                 dialog.setPositiveButton("Retry Connection",
@@ -285,12 +293,6 @@ public class MainActivity extends AppCompatActivity
                                         e.printStackTrace();
                                     }
                                     socket = null;
-                                }
-                                try {
-                                    Method m = device.getClass().getMethod("removeBond", (Class[]) null);
-                                    m.invoke(device);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
                         });
@@ -395,7 +397,9 @@ public class MainActivity extends AppCompatActivity
     }
     class myTimer extends TimerTask {
         public void run() {
-                myBluetoothAdapter.cancelDiscovery();
+                if(myBluetoothAdapter.isDiscovering()) {
+                    myBluetoothAdapter.cancelDiscovery();
+                }
                 myBluetoothAdapter.startDiscovery();
         }
     }
