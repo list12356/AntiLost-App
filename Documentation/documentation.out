@@ -1,4 +1,12 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
 \BOOKMARK [1][-]{section.2}{Main function}{}% 2
-\BOOKMARK [1][-]{section.3}{Details of impletation}{}% 3
-\BOOKMARK [1][-]{section.4}{Conclusion and Future plan}{}% 4
+\BOOKMARK [1][-]{section.3}{User Guide}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Add and delete }{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Find and Call the item}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{User Settings}{section.3}% 6
+\BOOKMARK [1][-]{section.4}{Details of impletation}{}% 7
+\BOOKMARK [2][-]{subsection.4.1}{Java Class}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.2}{The bluetooth communication}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.3}{The location services}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.4}{The Raspberry Pi}{section.4}% 11
+\BOOKMARK [1][-]{section.5}{Conclusion and Future Plan}{}% 12

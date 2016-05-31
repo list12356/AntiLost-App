@@ -31,6 +31,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -173,7 +174,9 @@ public class MainActivity extends AppCompatActivity
         locked=0;
         super.onResume();
         myArrayAdapter.notifyDataSetChanged();
-        myBluetoothAdapter.startDiscovery();
+        if(timer==null)
+            timer=new Timer();
+        timer.schedule(new myTimer(),1000,3000);
     }
     @Override
     public void onBackPressed() {
@@ -252,7 +255,10 @@ public class MainActivity extends AppCompatActivity
             if (socket.isConnected()) {
                 dialog.setTitle("Device:" + myItemList.Data.get(pos).Name);
                 //显示信号强度
-                dialog.setMessage("RSSI:"+myItemList.Data.get(pos).rssi+"\n"+"distance:"+Math.pow(10.0,((Math.abs(myItemList.Data.get(pos).rssi)-50.0)/50.0)));
+                DecimalFormat decimalFormat=new DecimalFormat(".00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+                double dist=Math.pow(10.0,((Math.abs(myItemList.Data.get(pos).rssi)-50.0)/50.0));
+                String p=decimalFormat.format(dist);//format 返回的是字符串
+                dialog.setMessage("RSSI:"+myItemList.Data.get(pos).rssi+"\n"+"speculated distance:"+p+"m");
                 dialog.setPositiveButton("Call my item",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -410,7 +416,7 @@ public class MainActivity extends AppCompatActivity
                         myItemList.Data.get(i).last_time=calendar.get(Calendar.YEAR)+"/"+calendar.get(Calendar.MONTH)+"/"
                                 +calendar.get(Calendar.DATE)+" "+calendar.get(Calendar.HOUR)+":"+calendar.get(Calendar.MINUTE)
                                 +":"+calendar.get(Calendar.SECOND);
-                        status_text.setText("Device:"+ myItemList.Data.get(i).Name+"RSSI:"+myItemList.Data.get(i).rssi);
+                        status_text.setText("Device:"+ myItemList.Data.get(i).Name+" RSSI:"+myItemList.Data.get(i).rssi);
                         if(mylocation!=null) {
                             myItemList.Data.get(i).last_location=mylocation;
                             myItemList.Data.get(i).latitude=latitude;
@@ -441,7 +447,7 @@ public class MainActivity extends AppCompatActivity
         public void onReceiveLocation(BDLocation location) {
             //Receive Location
             StringBuffer sb = new StringBuffer(256);
-            sb.append("\nlatitude : ");
+            sb.append("latitude : ");
             sb.append(location.getLatitude());
             sb.append("\nlontitude : ");
             sb.append(location.getLongitude());
@@ -450,7 +456,7 @@ public class MainActivity extends AppCompatActivity
                 sb.append("GPS");
             } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
                 sb.append("\ntype : ");
-                sb.append("网络定位成功");
+                sb.append("Network Location");
             } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {// 离线定位结果
                 sb.append("\ntype : ");
                 sb.append("离线定位成功，离线定位结果也是有效的");

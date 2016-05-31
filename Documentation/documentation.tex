@@ -5,11 +5,38 @@
  %\usepackage{algorithmic}
  \usepackage{algpseudocode}
 \begin{document}
-\title{Simple Shell Documentation}
+\title{Anti-lost System Documentation}
 \author{Li Shitao}
 \maketitle
 \section{Introduction}
+
+Nowadays, with quick pace of life, people frequently forget or lost their personally things. As the techonology developing significantly, it is naturally to have the idea that the high technology may help people .This anti-lost system is designed and developed to solve this problem using the Bluetooth technology. It can help people quickly find the things that they can not find currently, as well as recording the time and location that the item was last discovered. All the source code is avaliable on  \url{https://github.com/list12356/AntiLost-App.git}.\\
+The main functoin and overview of the system is given in Chapter 2, the step of using the system is given in Chapter 3, the details about how the system work will be explained in Chapter 4, and I also gives my future plan in Chapter 5.
 \section{Main function}
+This system consists of an Android-App and several raspberry-Pi representing the personally things of the user. The main function of this system are listed as following
+\begin{itemize}
+\item add, remove or edit the device the user want to keep listening
+\item quickly send a beep to the device that user want to find within the range of bluetooth communication
+\item alarm user when devices are too far from the user
+\item record the geographic information once the device is scanned
+\end{itemize}
+\section{User Guide}
+\subsection{Add and delete }
+For a new user to use the system, you should keep your bluetooth on in your phone and switch on the raspberry Pi, the Python script will automatically run on the raspberry Pi. Once you finished, open the app, tap the menu in the right-up corner and select the `add item' option, the page will jump to another activity. Press the scan button and youcan get all the bluetooth devices avaliable, select one you want to keep listening and give it a name(blank for its default name). Then you can get the device shown on your main item list. If you no longer want to keep the device, you can select the `delete item` in the menu and choose the device in the delete phrase.
+\subsection{Find and Call the item}
+If you want to find your Item, select it and the program will try to connect it ,if success, you can get the RSSI of the device and a speculated distance according to the RSSI. Choose the `Call my item' button, the program will send a message to the Raspeberry Pi to make it beep. If it fails, you can see the information about the last time and location that the device was scanned. \\
+If you are too far from your device, the program will auto matically send a message causing both your phone and the Raspberry Pi  to alarm you. Also, whether you want to recieve the alarm and the alarm distance can both be set by the user.
+\subsection{User Settings}
+
 \section{Details of impletation}
-\section{Conclusion and Future plan}
+\subsection{Java Class}
+I used two extra java calss to storage the user's information. The first one is the \emph{myItem.java}, it contains the name, address, last scaned time and location of the item. The second one is the \emph{ItemList.java}, it contains a List data stores all the user's items and several methods including add and delete data.
+\subsection{The bluetooth communication}
+In the MainActivity, there is a timer task run background to scan all the available devices around. Once it discoveres a device that is in the user's item list, it will refresh the information, eg. RSSI, location and time, in the item list. Noticing that the bluetooth discovery will automatically restart in 12 seconds, which is too long a period for the RSSI value to refresh, we set the schedule period of the task to 3 seconds. When user select one item 
+\subsection{The location services}
+I use the BaiduLocation SDK and BaiduMap SDK to finish the location and map services.
+\subsection{The Raspberry Pi}
+
+%\section{Experiments}
+\section{Conclusion and Future Plan}
 \end{document}
