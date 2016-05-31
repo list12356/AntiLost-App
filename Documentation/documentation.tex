@@ -2,6 +2,7 @@
 \usepackage{hyperref}
 \usepackage{algorithm}
 \usepackage{graphicx}
+\usepackage{subfig}
  %\usepackage{algorithmic}
  \usepackage{algpseudocode}
 \begin{document}
@@ -21,10 +22,29 @@ This system consists of an Android-App and several raspberry-Pi representing the
 \item record the geographic information once the device is scanned
 \end{itemize}
 \section{User Guide}
-\subsection{Add and delete }
 For a new user to use the system, you should keep your bluetooth on in your phone and switch on the raspberry Pi, the Python script will automatically run on the raspberry Pi. Once you finished, open the app, tap the menu in the right-up corner and select the `add item' option, the page will jump to another activity. Press the scan button and youcan get all the bluetooth devices avaliable, select one you want to keep listening and give it a name(blank for its default name). Then you can get the device shown on your main item list. If you no longer want to keep the device, you can select the `delete item` in the menu and choose the device in the delete phrase.
+\begin{figure}[htbp]
+\subfloat{
+\label{fig:3}
+\includegraphics[width =160pt ,keepaspectratio ]{4.png}
+}
+\subfloat{
+\label{fig:4}
+\includegraphics[width =160pt ,keepaspectratio ]{3.png}
+}
+\end{figure}
 \subsection{Find and Call the item}
 If you want to find your Item, select it and the program will try to connect it ,if success, you can get the RSSI of the device and a speculated distance according to the RSSI. Choose the `Call my item' button, the program will send a message to the Raspeberry Pi to make it beep. If it fails, you can see the information about the last time and location that the device was scanned. \\
+\begin{figure}[t]
+\subfloat{
+\label{fig:5}
+\includegraphics[width =160pt ,keepaspectratio ]{5.png}
+}
+\subfloat{
+\label{fig:6}
+\includegraphics[width =160pt ,keepaspectratio ]{7.png}
+}
+\end{figure}
 If you are too far from your device, the program will auto matically send a message causing both your phone and the Raspberry Pi  to alarm you. Also, whether you want to recieve the alarm and the alarm distance can both be set by the user.
 \subsection{User Settings}
 
@@ -40,6 +60,7 @@ I use the BaiduLocation SDK and BaiduMap SDK to finish the location and map serv
 The model I used is Raspberry Pi Model 2.0B. I used a HC-05 bluetooth adapter and a low-level triggered buzzer. I write a Python program to resolve the message recieved from the HC-05 adapter. The program will read from a FIFO file “/dev/ttyAMA0'' every 0.1s, and once it recieves the message from the FIFO, it will send a high voltage to the GPIO output to beep the buzzer. 
 %\section{Experiments}
 \section{Conclusion and Future Plan}
+The system now just do the basic functions well. In the future, I plan to make an online version. It is intrinsic to think that when every
 
 
 \end{document}
