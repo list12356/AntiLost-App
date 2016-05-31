@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
     double longitude=0;
     double latitude=0;
 
-    private static final int min_rssi=70;
+    public static int min_rssi=80;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity
         setView();
         initLocation();
         init_connection();
-        init_discovery();
 
         mLocationClient.start();
         myBluetoothAdapter.startDiscovery();
@@ -104,9 +103,6 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    void init_discovery() {
-
-    }
     void init_connection()
     {
         myItemList=new ItemList();
@@ -228,7 +224,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_manage) {
-
+            Intent jump=new Intent(MainActivity.this, SettingActivity.class);
+            startActivity(jump);
+            finish();
 
         } else if (id == R.id.nav_share) {
 
@@ -255,8 +253,8 @@ public class MainActivity extends AppCompatActivity
             if (socket.isConnected()) {
                 dialog.setTitle("Device:" + myItemList.Data.get(pos).Name);
                 //显示信号强度
-                DecimalFormat decimalFormat=new DecimalFormat(".00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
-                double dist=Math.pow(10.0,((Math.abs(myItemList.Data.get(pos).rssi)-50.0)/50.0));
+                DecimalFormat decimalFormat=new DecimalFormat("0.00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+                double dist=Math.pow(10.0,((Math.abs(myItemList.Data.get(pos).rssi)-60.0)/20.0));
                 String p=decimalFormat.format(dist);//format 返回的是字符串
                 dialog.setMessage("RSSI:"+myItemList.Data.get(pos).rssi+"\n"+"speculated distance:"+p+"m");
                 dialog.setPositiveButton("Call my item",

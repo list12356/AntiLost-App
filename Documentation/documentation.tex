@@ -32,11 +32,14 @@ If you are too far from your device, the program will auto matically send a mess
 \subsection{Java Class}
 I used two extra java calss to storage the user's information. The first one is the \emph{myItem.java}, it contains the name, address, last scaned time and location of the item. The second one is the \emph{ItemList.java}, it contains a List data stores all the user's items and several methods including add and delete data.
 \subsection{The bluetooth communication}
-In the MainActivity, there is a timer task run background to scan all the available devices around. Once it discoveres a device that is in the user's item list, it will refresh the information, eg. RSSI, location and time, in the item list. Noticing that the bluetooth discovery will automatically restart in 12 seconds, which is too long a period for the RSSI value to refresh, we set the schedule period of the task to 3 seconds. When user select one item 
+In the MainActivity, there is a timer task run background to scan all the available devices around. Once it discoveres a device that is in the user's item list, it will refresh the information, eg. RSSI, location and time, in the item list. Noticing that the bluetooth discovery will automatically restart in 12 seconds, which is too long a period for the RSSI value to refresh, we set the schedule period of the task to 3 seconds. When user select one item, the program will try to start a connection to the device using a bluetooth socket. The pseudo code is in \ref{alg:Bluetooth}.
+May be it is proper to keep the connection in order to save time. However, the bluetooth can only have 8 device connecting at the sametime, and it is a waste of resources considering that in most time there is actually no communication between devices. Besides, in practice, I find that the keeping of connections will influence the quality of the discovery process in some older bluetooth devices. 
 \subsection{The location services}
-I use the BaiduLocation SDK and BaiduMap SDK to finish the location and map services.
+I use the BaiduLocation SDK and BaiduMap SDK to finish the location and map services. In the main activity, there's a listener called \emph{BDLocationListener} to get and recieve the location from the Baidu service. As metioned above, when any device listed in the item list is scaned, its location information will be updated according to this method. In the Map Activity, I use the Baidu Map SDK to draw a map and show the text information
 \subsection{The Raspberry Pi}
-
+The model I used is Raspberry Pi Model 2.0B. I used a HC-05 bluetooth adapter and a low-level triggered buzzer. I write a Python program to resolve the message recieved from the HC-05 adapter. The program will read from a FIFO file “/dev/ttyAMA0'' every 0.1s, and once it recieves the message from the FIFO, it will send a high voltage to the GPIO output to beep the buzzer. 
 %\section{Experiments}
 \section{Conclusion and Future Plan}
+
+
 \end{document}
